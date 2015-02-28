@@ -1,0 +1,18 @@
+#CX_CONFIG.H
+In this file include all the system .h file we need for this servers.
+
+#CX_CORE.H
+In this file include all part of .h and defines which we need.
+
+#CX_HTTP.C
+In this file is for handle http request such as parse the http header, read/write and build header.
+
+#CX_LOG.C
+In this file provide a function to recode log.
+
+#CX_OS.C
+In this file provide some useful system function, such as noblock_io, bind socket.
+
+
+
+SOME CODE COMING FROM NGINX 0.5. AND STACKOVERFLOW.COM.

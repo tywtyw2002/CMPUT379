@@ -1,0 +1,15 @@
+Tianyi WU
+
+#Q1
+The fork()/Pthread() server is very easy to implement. Because for each connect we just add a new thread or process to process the http request.
+The fork and pthread, not have too much challenges, because they use block IO, for write/read just block the program.
+But the poll is a nonblock IO, which give http server a good performance, but increase the difficult for programming.
+
+#Q2
+The fork has advantageous on short amount jobs(connections). Compared with fork, the pthreads we need to considered of data racing conditions, because it shared stack. For example, in pthread, each time we need to malloc a new address spaces to save the process data, and should use lock to reduce the data racing.
+On the other hand, if the connections is really big, such as in the product enviroment. the pthread has advantageous than fork. Because create thread is quickly than fork. If we use pthread pool, process the large amount of the connection, we can save a lot of time in fork the process.
+
+#Q3
+The server_p is advantageous on multiple-core and medium amount of connections, because compared with server_s the server_p(pthread) is more easy in programming. For example, the struk of server_p.c is like a other type server_f.c. 
+
+However, the server_p is not good with large amount connections. Beacuse the server_p need memory to save each thread state, and programm will do a lot of context switch between each thread. So, server_p cost a lot of cpu times and use large amount memory. Compared with server_p, the server_s only use single process, there are no context switch in the user space(ignore the kernel context switch). So, process the huge amount http request, the server_s is more effiency, because which use less memory and increase the cpu useage(reduce the IO wait time, since its use the nonblock IO).

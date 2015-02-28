@@ -1,0 +1,52 @@
+User Documentation
+
+    This is a single player shooting game, named “Saucer”.
+    To start the game, the player should change directory to game’s directory, then type in “./saucer” in the terminal window. 
+    In order to get beautiful saucer game, please use urxvt terminal to launch this game.
+    When you in to the game you arrived to the LEVEL 1, if you played this game before, you can see you last time sorce which dispaly on the bottom right.
+    You can just use ',' to move ship to the left position and use '.' to move ship to the right position. The space key ' ' will launch a rocket. And any times you can entry 'H' to show the control keybind. And press "Q" to quit this game.
+    After the player hit enought sacuer, he will be go to next level of the game.
+    If player's life go to zero, its gameover, player can press 'R' to try this level agian. 
+
+
+Developer Documentation
+Code Structure
+    Start form the main function, and init the game setting, such as init terminal, init score, and others.
+    Call gameMain function to start new game.
+    The gameMain create 3 subthread SaucerManager, RocketManager, StatusManager.
+    SaucerManager build new saucer and create saucer thread.
+    RocketManager build launch new Rocket and create rocket thread.
+    StatusManager mointer the game, and decidec levelup or gameover.
+
+    After Levelup, killed all 3 thread, then reset the game_info, then call gameMain again.
+    
+Threads
+Main:
+    This is the main thread for game, and this thread controled 3 sub game thread(Saucer Management, Rocket Management and Status Manager). controlling gaming in each level, move the spaceship, and do reset between each level and control the level quit, as well as mointer the keyboard input and set fire_flag. 
+
+Saucer Manager Thread:
+    This is a Manager of all saucer sub thread. The responsibility of this thread is create new Saucer sub thread and recycle non-active saucer thread. And after exit_flag or game_flag set, kill all Saucer thread and free the memory.
+
+Saucer threads:
+    Each saucer thread control the movement of the saucer, after disactive flag is set, exit the thread.
+
+Rocket Manager Thread:
+    This is the Manage thread of all rocket sub thread, The responsibility of this thread is create new Rocket thread when fire_flag is set, recycle non-active rocket thread, and judgement the rocket hitting or missing, if hitting the saucer, disactive the saucer. As well as kill all rocket thead after exit_glag or game_flag set.
+
+Rocket threads:
+   Each saucer thread control the movement of the saucer, after disactive flag is set, exit the thread.
+
+Status Manager Thread:
+    This thread is mangament all status of the game. The responsibility of this thead is print the status text on the bottom of screen, and mointer the saucer escaped and rocket left. When get the levelup or gameover conditional set game_flag or exit_flag to terminal the current game.
+
+Critical Sections
+It has 3 Cirtical Section, the first one is screen control aka "sx", the other is rocket control aka "rx" and the last one is sys_info control aka 'sysx'.
+
+    sx:
+        This lock is locked at when thread output something to screen, and when this lock is locked the all rocket thread an saucer thread are paused.
+
+    rx:
+        This lock is lock only when rocket Manager thread update rocket database.
+
+    sysx:
+        This lock only lock when update the sys_info struct, which is control the game process, such as level, rocket left, saucer escaped, and other import information for the game.
